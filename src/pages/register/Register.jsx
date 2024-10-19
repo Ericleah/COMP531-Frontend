@@ -1,117 +1,169 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import './registerStyle.css'; // Assume a new CSS file name
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { register as registerAction } from "../../actions/authActions"; // Assuming you've stored it in an 'actions' folder
+import profilePic from "../../assets/profile.png";
+import styled from "styled-components";
+import "./register.scss";
 
-// Styled components for button styling
-import styled from 'styled-components';
+const Card = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+  width: 100%;
+  max-width: 500px;
+`;
 
-const ActionButton = styled.button`
+const Input = styled.input`
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+`;
+
+const Button = styled.button`
   background-color: #4a6fa5;
   color: white;
   border: none;
   padding: 10px 20px;
-  border-radius: 3px;
-  font-size: 16px;
+  border-radius: 5px;
   cursor: pointer;
-  &:hover {
-    background-color: #3a5f85;
-  }
-`;
+  font-size: 16px;
+  width: 100%;
+  margin-top: 10px;
 
-const FormContainer = styled.div`
-  margin: auto;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.1);
-  background: white;
-  width: 90%;
-  max-width: 500px;
+  &:hover {
+    background-color: #365880;
+  }
 `;
 
 const Register = () => {
   const [formData, setFormData] = useState({
-    user: '',
-    mail: '',
-    mobile: '',
-    dob: '',
-    postalCode: '',
-    pwd: '',
-    confirmPwd: ''
+    username: '',
+    email: '',
+    phone: '',
+    birthDate: '',
+    zipcode: '',
+    password: '',
+    confirmPassword: ''
   });
-
-  const [formErrors, setFormErrors] = useState({});
+  const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [errors, setErrors] = useState({});
 
-  const handleInputChange = (e) => {
+
+  const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-    validateInput(name, value);
+    setFormData(prevState => ({ ...prevState, [name]: value }));
+  };
+  const setError = (field, message) => {
+    setErrors(prevErrors => ({ ...prevErrors, [field]: message }));
   };
 
-  const validateInput = (fieldName, value) => {
-    let errorMsg = '';
-    switch (fieldName) {
-      case 'user':
-        if (!/^[a-zA-Z0-9_]+$/.test(value)) {
-          errorMsg = 'Username must be alphanumeric.';
-        }
-        break;
-      case 'mail':
-        if (!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(value)) {
-          errorMsg = 'Email is invalid.';
-        }
-        break;
-      case 'postalCode':
-        if (!/^\d{5}(-\d{4})?$/.test(value)) {
-          errorMsg = 'Postal code is invalid.';
-        }
-        break;
-      case 'pwd':
-        if (value.length < 6) {
-          errorMsg = 'Password must be at least 6 characters long.';
-        }
-        break;
-      case 'confirmPwd':
-        if (value !== formData.pwd) {
-          errorMsg = 'Passwords do not match.';
-        }
-        break;
-    }
-    setFormErrors(prev => ({ ...prev, [fieldName]: errorMsg }));
-  };
+  const validateForm = () => {
+    let valid = true;
+    const { username, email, phone, birthDate, zipcode, password, confirmPassword } = formData;
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const isFormValid = Object.values(formErrors).every(x => x === '');
-    if (isFormValid) {
-      // Submit the data
-      console.log('Form data submitted:', formData);
-      navigate('/home'); // Assuming '/home' is the target after registration
+    // Username validation
+    if (!username.trim()) {
+      setError('username', 'Username is required');
+      valid = false;
+    } else if (!/^[a-zA-Z0-9_]+$/.test(username)) {
+      setError('username', 'Username can only contain letters, numbers, and underscores');
+      valid = false;
     } else {
-      console.error('Validation errors:', formErrors);
+      setError('username', '');
     }
+
+    // Email validation
+    if (!email) {
+      setError('email', 'Email is required');
+      valid = false;
+    } else if (!/\S+@\S+\.\S+/.test(email)) {
+      setError('email', 'Email address is invalid');
+      valid = false;
+    } else {
+      setError('email', '');
+    }
+
+    // Phone validation
+    if (phone && !/^\d{10}$/.test(phone.replace(/[\s-()]/g, ''))) {
+      setError('phone', 'Phone number must be 10 digits');
+      valid = false;
+    } else {
+      setError('phone', '');
+    }
+
+    // Birthdate validation
+    if (birthDate && new Date(birthDate) >= new Date()) {
+      setError('birthDate', 'Birth date must be in the past');
+      valid = false;
+    } else {
+      setError('birthDate', '');
+    }
+
+    // Zipcode validation
+    if (zipcode && !/^\d{5}(-\d{4})?$/.test(zipcode)) {
+      setError('zipcode', 'Zip code is invalid');
+      valid = false;
+    } else {
+      setError('zipcode', '');
+    }
+
+    // Password validation
+    if (!password) {
+      setError('password', 'Password is required');
+      valid = false;
+    } else if (password.length < 6) {
+      setError('password', 'Password must be at least 6 characters');
+      valid = false;
+    } else {
+      setError('password', '');
+    }
+
+    // Confirm password validation
+    if (password !== confirmPassword) {
+      setError('confirmPassword', 'Passwords do not match');
+      valid = false;
+    } else {
+      setError('confirmPassword', '');
+    }
+
+    return valid;
+  };
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (formData.password !== formData.confirmPassword) {
+      alert("Passwords do not match!");
+      return;
+    }
+    
+    dispatch(registerAction({...formData, profilePic})); // Pass all formData to the action
+    navigate("/");
   };
 
   return (
-    <FormContainer>
-      <h2>Create Your Account</h2>
-      <form onSubmit={handleSubmit}>
-        <input type="text" placeholder="Username" name="user" value={formData.user} onChange={handleInputChange} />
-        {formErrors.user && <div className="error">{formErrors.user}</div>}
-        <input type="email" placeholder="Email" name="mail" value={formData.mail} onChange={handleInputChange} />
-        {formErrors.mail && <div className="error">{formErrors.mail}</div>}
-        <input type="text" placeholder="Phone" name="mobile" value={formData.mobile} onChange={handleInputChange} />
-        <input type="date" name="dob" value={formData.dob} onChange={handleInputChange} />
-        <input type="text" placeholder="Postal Code" name="postalCode" value={formData.postalCode} onChange={handleInputChange} />
-        {formErrors.postalCode && <div className="error">{formErrors.postalCode}</div>}
-        <input type="password" placeholder="Password" name="pwd" value={formData.pwd} onChange={handleInputChange} />
-        {formErrors.pwd && <div className="error">{formErrors.pwd}</div>}
-        <input type="password" placeholder="Confirm Password" name="confirmPwd" value={formData.confirmPwd} onChange={handleInputChange} />
-        {formErrors.confirmPwd && <div className="error">{formErrors.confirmPwd}</div>}
-        <ActionButton type="submit">Register</ActionButton>
-      </form>
-      <Link to="/login">Already have an account? Log in</Link>
-    </FormContainer>
+    <div className="register-container">
+      <Card>
+        <h2>Create Your Account</h2>
+        <form onSubmit={handleSubmit}>
+          <Input type="text" name="username" placeholder="Username" value={formData.username} onChange={handleChange} />
+          <Input type="email" name="email" placeholder="Email" value={formData.email} onChange={handleChange} />
+          <Input type="text" name="phone" placeholder="Phone" value={formData.phone} onChange={handleChange} />
+          <Input type="date" name="birthDate" placeholder="Birth Date" value={formData.birthDate} onChange={handleChange} />
+          <Input type="text" name="zipcode" placeholder="Zip Code" value={formData.zipcode} onChange={handleChange} />
+          <Input type="password" name="password" placeholder="Password" value={formData.password} onChange={handleChange} />
+          <Input type="password" name="confirmPassword" placeholder="Confirm Password" value={formData.confirmPassword} onChange={handleChange} />
+          <Button type="submit">Register</Button>
+        </form>
+        <Link to="/login">Already have an account? Log in</Link>
+      </Card>
+    </div>
   );
 };
 
