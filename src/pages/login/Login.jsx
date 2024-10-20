@@ -9,35 +9,43 @@ import DatePicker from "react-datepicker";
 import { useDispatch } from 'react-redux';
 import { login } from '../../actions/authActions'; // Assuming you've stored it in an 'actions' folder
 import profilePic from '../../assets/profile.png';
+import riceIcon from '../../assets/rice-university-logo.png';
 
 
 // Styled Components for the buttons
-const LoginButton = styled.button`
-  background-color: #938eef;
-  color: white;
-  border: none;
-  padding: 10px 15px;
-  border-radius: 5px;
-  font-size: 15px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  font-weight: 600;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-    "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji",
-    "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-
-  &:hover {
-    background-color: #7a75d6;
-    animation: pulse 0.6s infinite;
-  }
+const Card = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+  width: 100%;
+  max-width: 500px;
 `;
 
-const RegisterButton = styled(LoginButton)`
-  background-color: #e3e0e0;
-  color: black;
+const Input = styled.input`
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+`;
+
+const Button = styled.button`
+  background-color: #4a6fa5;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  width: 100%;
+  margin-top: 10px;
 
   &:hover {
-    background-color: #dedada;
+    background-color: #365880;
   }
 `;
 
@@ -83,47 +91,27 @@ const Login = () => {
     }
   };
 
-  return isLoggedIn ? (
-    <div className="text-center mt-5">Welcome, {username}!</div>
-  ) : (
-    <div className="register d-flex align-items-center vh-100">
-      <div className="card mx-auto" style={{ maxWidth: "800px" }}>
-        <div className="row g-0">
-          <div className="col-md-6 d-flex flex-column justify-content-center align-items-center p-5 text-white bg-primary">
-            <h2 className="display-1 mb-4">Hello World.</h2>
-            <span className="mb-3">First time?</span>
-            <Link to="/register">
-              <RegisterButton>REGISTER</RegisterButton>
-            </Link>
-          </div>
-          <div className="col-md-6 d-flex flex-column justify-content-center p-5">
-            <h2 className="mb-4">Login</h2>
-            <form onSubmit={handleSubmit}>
-              <div className="mb-3">
-                <input
-                  type="text"
-                  className="form-control w-100"
-                  placeholder="Username"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                />
-              </div>
-              <div className="mb-3">
-                <input
-                  type="password"
-                  className="form-control w-100"
-                  placeholder="Password (Street Name)"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-              </div>
-              <div className="d-flex justify-content-center">
-                <LoginButton type="submit">LOGIN</LoginButton>
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>
+  return (
+    <div className="login-container">
+      <Card>
+        <h2>Log In</h2>
+        <form onSubmit={handleSubmit}>
+          <Input
+            type="text"
+            placeholder="Username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+          />
+          <Input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <Button type="submit">Login</Button>
+        </form>
+        <Link to="/register">Need an account? Register here</Link>
+      </Card>
     </div>
   );
 };

@@ -12,11 +12,15 @@ import { useContext, useState } from "react";
 import { DarkModeContext } from "../../context/darkModeContext";
 import { AuthContext } from "../../context/authContext";
 import { Dropdown } from "react-bootstrap";
+import { useSelector, useDispatch } from "react-redux";
+
+import { selectUser } from "../../reducer/authReducer";
+
 
 
 const Navbar = () => {
+  const currentUser = useSelector(selectUser);
   const { toggle, darkMode } = useContext(DarkModeContext);
-  const { currentUser } = useContext(AuthContext);
   const navigate = useNavigate();
   const [showDropdown, setShowDropdown] = useState(false);
 
