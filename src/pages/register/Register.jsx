@@ -57,7 +57,6 @@ const Register = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
 
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const [userNameError, setUserNameError] = useState('');
   const [emailError, setEmailError] = useState("");
   const [phoneError, setPhoneError] = useState("");
@@ -65,67 +64,35 @@ const Register = () => {
   const [zipCodeError, setZipCodeError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [confirmPasswordError, setConfirmPasswordError] = useState("");
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const navigate = useNavigate();
+  const [usernamesFromApi, setUsernamesFromApi] = useState([]);
 
-  const handleNameChange = (e) => {
-    const currentValue = e.target.value;
-    setUsername(currentValue);
-    checkUserName(currentValue);
-  };
-
-  const handleEmailChange = (e) => {
-    const currentValue = e.target.value;
-    setEmail(currentValue);
-    checkEmail(currentValue);
-  };
-
-  const handlePhoneChange = (e) => {
-    const currentValue = e.target.value;
-    setPhone(currentValue);
-    checkPhone(currentValue);
-  };
-
-  const handleZipCodeChange = (e) => {
-    const currentValue = e.target.value;
-    setZipCode(currentValue);
-    checkZipCode(currentValue);
-  };
-
-  const handlePasswordChange = (e) => {
-    const currentValue = e.target.value;
-    setPassword(currentValue);
-    checkPassword(currentValue);
-  };
-
-  const handleConfirmPasswordChange = (e) => {
-    const currentValue = e.target.value;
-    setConfirmPassword(currentValue);
-    checkConfirmPassword(currentValue);
-  };
+  useEffect(() => {
+    // Fetch the usernames from the provided API
+    fetch("https://jsonplaceholder.typicode.com/users")
+      .then((response) => response.json())
+      .then((data) => {
+        const fetchedUsernames = data.map((user) => user.username);
+        setUsernamesFromApi(fetchedUsernames);
+      })
+      .catch((error) => console.error("Error fetching usernames:", error));
+  }, []);
 
   const checkUserName = (inputValue) => {
-    let errorFound = false;
-
     if (!(/^[a-z]*$/.test(inputValue[0]))) {
         setUserNameError('Must start with lower case.');
-        errorFound = true;
+        $('[data-toggle="popover-username"]').popover('show');
     } else if (!(/^[a-z][A-Za-z0-9]*$/.test(inputValue))) {
         setUserNameError('Account name can only contain numbers and characters.');
-        errorFound = true;
+        $('[data-toggle="popover-username"]').popover('show');
     } else {
         setUserNameError(''); 
-    }
-
-    if (errorFound) {
-        $('[data-toggle="popover"]').popover('show');
-    } else {
-        $('[data-toggle="popover"]').popover('hide');
     }
   };
 
   const checkEmail = (emailValue) => {
     if (!(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(emailValue))) {
-        setEmailError("Enter email in this format: a@b.co.");
+        setEmailError("Enter email in this format: 1@1.com");
         $('[data-toggle="popover-email"]').popover('show');
     } else {
         setEmailError("");
@@ -135,7 +102,7 @@ const Register = () => {
 
   const checkPhone = (phoneValue) => {
     if (!(/^\(?(\d{3})\)?[- ]?(\d{3})[- ]?(\d{4})$/.test(phoneValue))) {
-      setPhoneError("Enter phone in this format: 346-628-7744.");
+      setPhoneError("Enter phone in this format: 123-456-7890.");
       $('[data-toggle="popover-phone"]').popover('show');
     } else {
       setPhoneError(""); 
@@ -183,14 +150,13 @@ const Register = () => {
   };
 
   useEffect(() => {
-    // Initialize the Bootstrap popover 
-    $('[data-toggle="popover"], [data-toggle="popover-email"], [data-toggle="popover-phone"], [data-toggle="popover-birthday"], [data-toggle="popover-zipcode"]'
+    $('[data-toggle="popover-username"], [data-toggle="popover-email"], [data-toggle="popover-phone"], [data-toggle="popover-birthday"], [data-toggle="popover-zipcode"]'
       , '[data-toggle="popover-password"], [data-toggle="popover-confirmpassword"]').popover();
     
     if (userNameError) {
-      $('[data-toggle="popover"]').popover('show');
+      $('[data-toggle="popover-username"]').popover('show');
     } else {
-      $('[data-toggle="popover"]').popover('hide');
+      $('[data-toggle="popover-username"]').popover('hide');
     }
     
     if (emailError) {
@@ -231,10 +197,46 @@ const Register = () => {
     
     return () => {
       // Hide and destroy popovers to avoid memory leaks
-      $('[data-toggle="popover"], [data-toggle="popover-email"], [data-toggle="popover-phone"], [data-toggle="popover-birthday"], [data-toggle="popover-zipcode"]'
+      $('[data-toggle="popover-username"], [data-toggle="popover-email"], [data-toggle="popover-phone"], [data-toggle="popover-birthday"], [data-toggle="popover-zipcode"]'
       , '[data-toggle="popover-password"], [data-toggle="popover-confirmpassword"]').popover('hide').popover('dispose');
     };
   }, [username, email, phone, userNameError, emailError, phoneError, birthdayError, zipCodeError, passwordError, confirmPasswordError]);
+
+  const handleNameChange = (e) => {
+    const currentValue = e.target.value;
+    setUsername(currentValue);
+    checkUserName(currentValue);
+  };
+
+  const handleEmailChange = (e) => {
+    const currentValue = e.target.value;
+    setEmail(currentValue);
+    checkEmail(currentValue);
+  };
+
+  const handlePhoneChange = (e) => {
+    const currentValue = e.target.value;
+    setPhone(currentValue);
+    checkPhone(currentValue);
+  };
+
+  const handleZipCodeChange = (e) => {
+    const currentValue = e.target.value;
+    setZipCode(currentValue);
+    checkZipCode(currentValue);
+  };
+
+  const handlePasswordChange = (e) => {
+    const currentValue = e.target.value;
+    setPassword(currentValue);
+    checkPassword(currentValue);
+  };
+
+  const handleConfirmPasswordChange = (e) => {
+    const currentValue = e.target.value;
+    setConfirmPassword(currentValue);
+    checkConfirmPassword(currentValue);
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -259,21 +261,22 @@ const Register = () => {
   return (
     <div className="register-container">
       <Card>
-        <h2>Create Your Account</h2>
-        <div className="header">
+      <div className="header">
           <img src={riceIcon} alt="Rice University" className="university-logo" />
           <h1>Ricebook</h1>
         </div>
+        <h2>Create Your Account</h2>
+
         <form onSubmit={handleSubmit}>
-          <Input type="text" name="username" placeholder="Username" value={username} onChange={handleNameChange} data-toggle="popover"
+          <Input type="text" name="username" placeholder="Username" value={username} onChange={handleNameChange} data-toggle="popover-username"
                     data-trigger="manual" 
                     data-content={userNameError}
                     data-placement="top"  />
-          <Input type="email" name="email" placeholder="Email" value={email} onChange={handleEmailChange} data-toggle="popover"
+          <Input type="email" name="email" placeholder="Email" value={email} onChange={handleEmailChange} data-toggle="popover-email"
                     data-trigger="manual" 
                     data-content={emailError}
                     data-placement="top" />
-          <Input type="text" name="phone" placeholder="Phone" value={phone} onChange={handlePhoneChange} data-toggle="popover"
+          <Input type="text" name="phone" placeholder="Phone" value={phone} onChange={handlePhoneChange} data-toggle="popover-phone"
                     data-trigger="manual" 
                     data-content={phoneError}
                     data-placement="top"/>
@@ -281,19 +284,19 @@ const Register = () => {
                     setBirthDate(e.target.value);
                     checkAge(e.target.value);
                 }}
-                    data-toggle="popover"
+                    data-toggle="popover-birthday"
                     data-trigger="manual" 
                     data-content={birthdayError}
                     data-placement="top"/>
-          <Input type="text" name="zipcode" placeholder="Zip Code" value={zipcode} onChange={handleZipCodeChange} data-toggle="popover"
+          <Input type="text" name="zipcode" placeholder="Zip Code" value={zipcode} onChange={handleZipCodeChange} data-toggle="popover-zipcode"
                     data-trigger="manual" 
                     data-content={zipCodeError}
                     data-placement="top"/>
-          <Input type="password" name="password" placeholder="Password" value={password} onChange={handlePasswordChange} data-toggle="popover"
+          <Input type="password" name="password" placeholder="Password" value={password} onChange={handlePasswordChange} data-toggle="popover-password"
                     data-trigger="manual" 
                     data-content={passwordError}
                     data-placement="top"/>
-          <Input type="password" name="confirmPassword" placeholder="Confirm Password" value={confirmPassword} onChange={handleConfirmPasswordChange} data-toggle="popover"
+          <Input type="password" name="confirmPassword" placeholder="Confirm Password" value={confirmPassword} onChange={handleConfirmPasswordChange} data-toggle="popover-confirmpassword"
                     data-trigger="manual" 
                     data-content={confirmPasswordError}
                     data-placement="top"/>

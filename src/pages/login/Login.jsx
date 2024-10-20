@@ -94,6 +94,10 @@ const Login = () => {
   return (
     <div className="login-container">
       <Card>
+        <div className="header">
+          <img src={riceIcon} alt="Rice University" className="university-logo" />
+          <h1>Ricebook</h1>
+        </div>
         <h2>Log In</h2>
         <form onSubmit={handleSubmit}>
           <Input

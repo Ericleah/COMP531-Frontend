@@ -82,7 +82,6 @@ const Profile = () => {
     }, 1000);
   };
 
-
   return (
     <div className="profile container mt-4">
       <Link to="/">

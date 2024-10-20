@@ -14,3 +14,14 @@
     max-width: 400px;  // Max-width for the card to maintain aesthetics on larger screens
   }
 }
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+
+  .university-logo {
+    width: 50px; // Set appropriate size for the logo
+    margin-right: 10px;
+  }
+}
