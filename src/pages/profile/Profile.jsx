@@ -1,18 +1,18 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import PlaceIcon from "@mui/icons-material/Place";
+import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
+import AddAPhotoIcon from "@mui/icons-material/AddAPhoto";
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import PhoneIcon from "@mui/icons-material/Phone";
-import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
+import PlaceIcon from "@mui/icons-material/Place";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import EditProfileModal from "../../components/modal/EditProfileModal";
-import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
-import AddAPhotoIcon from '@mui/icons-material/AddAPhoto';
-import { useSelector, useDispatch } from 'react-redux';
-import { selectUser } from "../../reducer/authReducer";  
+import { useSelector, useDispatch } from "react-redux";
+import { selectUser } from "../../reducer/authReducer";
 import { login } from "../../actions/authActions";
-import styled from 'styled-components';
+import styled from "styled-components";
+import defaultProfilePic from "../../assets/profile.png";
 import "./profile.scss";
-import defaultProfilePic from '../../assets/profile.png'; 
 
 const BaseButton = styled.button`
   width: auto;
@@ -39,7 +39,6 @@ const EditButton = styled(BaseButton)`
 const Profile = () => {
   const currentUser = useSelector(selectUser);
   const dispatch = useDispatch();
-
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [profilePicture, setProfilePicture] = useState(null);
 
@@ -79,46 +78,38 @@ const Profile = () => {
   };
 
   return (
-    <div className="profile container mt-4">
+    <div className="profile-container">
       <Link to="/">
         <ArrowBackIosIcon className="back-button" />
       </Link>
-      <div className="row mt-5">
-        <div className="col-12 text-center mt-3">
-          <div className="profile-pic-wrapper">
-            <img
-              src={currentUser.profilePic || defaultProfilePic}
-              alt={currentUser.username}
-              className="img-fluid rounded-circle profile-pic"
-            />
-            <input 
-              type="file" 
-              id="profile-pic-input" 
-              style={{ display: 'none' }} 
-              onChange={handleFileChange} 
-              accept="image/*" 
-            />
-            <label htmlFor="profile-pic-input" className="profile-picture-label">
-              <AddAPhotoIcon style={{fontSize:18, color: "#938eef"}}/>
-            </label>
-          </div>
+      <div className="profile-header">
+        <div className="profile-pic-wrapper">
+          <img
+            src={currentUser.profilePic || defaultProfilePic}
+            alt={currentUser.username}
+            className="profile-pic"
+          />
+          <input 
+            type="file" 
+            id="profile-pic-input" 
+            style={{ display: 'none' }} 
+            onChange={handleFileChange} 
+            accept="image/*" 
+          />
+          <label htmlFor="profile-pic-input" className="profile-picture-label">
+            <AddAPhotoIcon style={{fontSize:18}}/>
+          </label>
         </div>
       </div>
-      <div className="row">
-        <div className="col-4 text-center">
-        </div>
-        <div className="col-4 text-center">
-          <h3><strong>{currentUser.username}</strong></h3>
-          <p><EmailOutlinedIcon /> {currentUser.email}</p>
-          <p><PhoneIcon /> {currentUser.phone}</p>
-          <p><PlaceIcon />{currentUser.zipcode}</p>
-          <p><VisibilityOffIcon />{currentUser.password && '*'.repeat(currentUser.password.length)}</p>
-          <EditButton onClick={handleEditClick}>
-                Edit
-          </EditButton>
-        </div>
-        <div className="col-4 text-center">
-        </div>
+      <div className="profile-info">
+        <h3><strong>{currentUser.username}</strong></h3>
+        <p><EmailOutlinedIcon /> {currentUser.email}</p>
+        <p><PhoneIcon /> {currentUser.phone}</p>
+        <p><PlaceIcon />{currentUser.zipcode}</p>
+        <p><VisibilityOffIcon />{currentUser.password && '*'.repeat(currentUser.password.length)}</p>
+        <EditButton onClick={handleEditClick}>
+          Edit
+        </EditButton>
       </div>
       <EditProfileModal
         isOpen={isModalOpen}

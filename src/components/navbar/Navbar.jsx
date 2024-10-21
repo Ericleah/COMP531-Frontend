@@ -13,6 +13,7 @@ import { DarkModeContext } from "../../context/darkModeContext";
 import { AuthContext } from "../../context/authContext";
 import { Dropdown } from "react-bootstrap";
 import { useSelector, useDispatch } from "react-redux";
+import { FilterTermContext } from "../../context/FilterTermContext";
 
 import { selectUser } from "../../reducer/authReducer";
 
@@ -23,10 +24,16 @@ const Navbar = () => {
   const { toggle, darkMode } = useContext(DarkModeContext);
   const navigate = useNavigate();
   const [showDropdown, setShowDropdown] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const { filterTerm, setFilterTerm } = useContext(FilterTermContext);
 
 
   const handleProfileIconClick = () => {
     navigate("/profile/${currentUser.id}`");
+  };
+
+  const handleInputChange = (e) => {
+    setSearchTerm(e.target.value);
   };
 
   const handleProfileClick = () => {
@@ -34,8 +41,15 @@ const Navbar = () => {
     setShowDropdown(false);
   };
 
+  const handleSearchIconClick = () => {
+    if (!searchTerm) {
+      navigate("/");
+    } else {
+      setFilterTerm(searchTerm);
+    }
+  };
+
   const handleLogout = () => {
-    // Logic to handle logout
     navigate("/login");
   };
 
@@ -43,7 +57,7 @@ const Navbar = () => {
     <div className="navbar">
       <div className="left">
         <Link to="/" className="brand">
-          <span>Ricebook</span>
+          <span className="brand-text">Ricebook</span>
         </Link>
         <HomeOutlinedIcon />
         {darkMode ? (
@@ -52,10 +66,13 @@ const Navbar = () => {
           <DarkModeOutlinedIcon onClick={toggle} />
         )}
         <GridViewOutlinedIcon />
-        <div className="search">
-          <SearchOutlinedIcon />
-          <input type="text" placeholder="Search..." />
-        </div>
+      </div>
+      <div className="search">
+        <input type="text" placeholder="Search..." value={searchTerm} onChange={handleInputChange} />
+        <SearchOutlinedIcon
+          onClick={handleSearchIconClick}
+          style={{ cursor: "pointer", color: "#938eef" }}
+        />
       </div>
       <div className="right">
         <div className="profileicon">
@@ -70,7 +87,7 @@ const Navbar = () => {
               {currentUser.name}
             </div>
           </Dropdown.Toggle>
-
+  
           <Dropdown.Menu>
             <Dropdown.Item href={`/profile/${currentUser.id}`}>Profile</Dropdown.Item>
             <Dropdown.Item onClick={handleLogout}>Log Out</Dropdown.Item>
@@ -79,6 +96,6 @@ const Navbar = () => {
       </div>
     </div>
   );
-};
+}
 
 export default Navbar;
