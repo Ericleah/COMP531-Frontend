@@ -1,4 +1,3 @@
-// Posts.js
 import React, { useEffect, useContext } from "react";
 import "./posts.scss";
 import Post from "../post/Post";
@@ -21,88 +20,88 @@ const Posts = () => {
   // Filtering the posts based on the filterTerm
   const filteredPosts = posts.filter((post) => {
     return (
-      (post.name
-        ? post.name.toLowerCase().includes(filterTerm.toLowerCase())
+      (post.userName
+        ? post.userName.toLowerCase().includes(filterTerm.toLowerCase())
         : false) ||
-      (post.desc
-        ? post.desc.toLowerCase().includes(filterTerm.toLowerCase())
+      (post.body
+        ? post.body.toLowerCase().includes(filterTerm.toLowerCase())
         : false)
     );
   });
 
   useEffect(() => {
     const userImages = [
-      "https://images.pexels.com/photos/1036623/pexels-photo-1036623.jpeg?auto=compress&cs=tinysrgb&w=1600",
       "https://images.pexels.com/photos/4881619/pexels-photo-4881619.jpeg?auto=compress&cs=tinysrgb&w=1600",
-      "https://images.pexels.com/photos/4881650/pexels-photo-4881650.jpeg?auto=compress&cs=tinysrgb&w=1600",
+      "https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=1600",
+      "https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=1600",
+      "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=1600",
+      "https://images.pexels.com/photos/614810/pexels-photo-614810.jpeg?auto=compress&cs=tinysrgb&w=1600",
+      "https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=1600",
+      "https://images.pexels.com/photos/91227/pexels-photo-91227.jpeg?auto=compress&cs=tinysrgb&w=1600",
+      "https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=1600",
+      "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=1600",
+      "https://images.pexels.com/photos/614810/pexels-photo-614810.jpeg?auto=compress&cs=tinysrgb&w=1600"
     ];
 
-    // Extract IDs from the followedUsers objects
-    const followedUserIds = followedUsers
-      .filter((user) => user.id !== currentUserID)
-      .map((user) => user.id);
-
-    // Combine initial followedUserIds with the ones added from RightBar, and also include the current user
-    const allFollowedUserIds = [
-      ...new Set([...followedUserIds, currentUserID]),
+    const postImages = [
+      "https://images.pexels.com/photos/248797/pexels-photo-248797.jpeg?auto=compress&cs=tinysrgb&w=1600", // Beautiful scene
+      "https://images.pexels.com/photos/34950/pexels-photo.jpg?auto=compress&cs=tinysrgb&w=1600", // Beautiful scene
+      "https://images.pexels.com/photos/302680/pexels-photo-302680.jpeg?auto=compress&cs=tinysrgb&w=1600", // Food
+      "https://images.pexels.com/photos/70497/pexels-photo-70497.jpeg?auto=compress&cs=tinysrgb&w=1600", // Food
+      "https://images.pexels.com/photos/46239/salmon-dish-food-meal-46239.jpeg?auto=compress&cs=tinysrgb&w=1600", // Food
+      "https://images.pexels.com/photos/248797/pexels-photo-248797.jpeg?auto=compress&cs=tinysrgb&w=1600", // Beautiful scene
+      "https://images.pexels.com/photos/2101187/pexels-photo-2101187.jpeg?auto=compress&cs=tinysrgb&w=1600", // Beautiful scene
+      "https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&w=1600", // Food
+      "https://images.pexels.com/photos/70497/pexels-photo-70497.jpeg?auto=compress&cs=tinysrgb&w=1600", // Food
+      "https://images.pexels.com/photos/46239/salmon-dish-food-meal-46239.jpeg?auto=compress&cs=tinysrgb&w=1600" // Food
     ];
 
     const fetchDetailsAndPosts = async () => {
       const allPosts = [];
+      const userImageMap = {};
 
-      // Loop through each user's ID in allFollowedUserIds and fetch their posts
-      for (let userId of allFollowedUserIds) {
-        // Fetch user data to get the user's name
+      // Fetch user data and posts for each followed user
+      for (let i = 0; i < followedUsers.length; i++) {
+        const user = followedUsers[i];
+        const userImage = userImages[i % userImages.length]; // Distribute images
 
-        const userResponse = await fetch(
-          `https://jsonplaceholder.typicode.com/users/${userId}`
+        userImageMap[user.id] = userImage;
+
+        // Fetch posts for the user
+        const postsResponse = await fetch(
+          `https://jsonplaceholder.typicode.com/posts?userId=${user.id}`
         );
+        const postsData = await postsResponse.json();
 
-        const clonedResponse = userResponse.clone();
-
-        // For debugging
-        const responseText = await clonedResponse.text();
-
-        const userData = await userResponse.json();
-
-        const response = await fetch(
-          `https://jsonplaceholder.typicode.com/posts?userId=${userId}`
-        );
-        const userPosts = await response.json();
-        // Add profilePic and user name details to each post
-        const postsWithDetails = userPosts.map((post) => {
+        // Add user image, name, and relative date to each post
+        const userPosts = postsData.map((post, index) => {
+          const postImagesForPost = index < 4 ? postImages.slice(0, 3) : []; // Add multiple images to first 4 posts
           return {
             ...post,
-            profilePic: userImages[userId % userImages.length],
-            username: userData.username, // Use the name from the user data
-            desc: post.title,
-            body: post.body,
+            userImage,
+            userName: user.username,
+            date: new Date(Date.now() - (index + 1) * 60000).toLocaleTimeString(), // Relative time
+            postImages: postImagesForPost // Add post images
           };
         });
 
-        allPosts.push(...postsWithDetails);
+        allPosts.push(...userPosts);
       }
 
+      // Update state with all posts
       dispatch(setPosts(allPosts));
     };
 
     fetchDetailsAndPosts();
-  }, [currentUserID, followedUsers]);
+  }, [followedUsers, dispatch]);
 
-  const addNewPost = (newPost) => {
-    dispatch(addPost(newPost));
-  };
-
+  // JSX to display posts
   return (
-    <div className="posts container mt-5">
-      <Share addNewPost={addNewPost} />
-      <div className="row">
-        {filteredPosts.map((post) => (
-          <div className="col-12 mb-5" key={post.id}>
-            <Post post={post} />
-          </div>
-        ))}
-      </div>
+    <div className="posts-container">
+      <Share />
+      {filteredPosts.map((post) => (
+        <Post key={post.id} post={post} />
+      ))}
     </div>
   );
 };
