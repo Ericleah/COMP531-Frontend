@@ -1,16 +1,12 @@
-import React, { useState, useContext } from "react";
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-
 import "./login.scss";
 import "bootstrap/dist/css/bootstrap.min.css";
 import styled from "styled-components";
-import { AuthContext } from "../../context/authContext";
-import DatePicker from "react-datepicker";
 import { useDispatch } from 'react-redux';
-import { login } from '../../actions/authActions'; // Assuming you've stored it in an 'actions' folder
+import { login } from '../../actions/authActions'; 
 import profilePic from '../../assets/profile.png';
 import riceIcon from '../../assets/rice-university-logo.png';
-
 
 // Styled Components for the buttons
 const Card = styled.div`
@@ -49,13 +45,22 @@ const Button = styled.button`
   }
 `;
 
+const userImages = [
+  "https://images.pexels.com/photos/4881619/pexels-photo-4881619.jpeg?auto=compress&cs=tinysrgb&w=1600",
+  "https://images.pexels.com/photos/614810/pexels-photo-614810.jpeg?auto=compress&cs=tinysrgb&w=1600",
+  "https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=1600",
+  "https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=1600",
+  "https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=1600",
+  "https://images.pexels.com/photos/91227/pexels-photo-91227.jpeg?auto=compress&cs=tinysrgb&w=1600",
+  "https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=1600",
+  "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=1600",
+  "https://images.pexels.com/photos/614810/pexels-photo-614810.jpeg?auto=compress&cs=tinysrgb&w=1600"
+];
+
 const Login = () => {
-  //const { login: handleLogin } = useContext(AuthContext); // Renamed for clarity
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const navigate = useNavigate();
-
   const dispatch = useDispatch();
 
   const handleSubmit = async (e) => {
@@ -68,13 +73,14 @@ const Login = () => {
     const user = users[0];
 
     if (user && user.address.street === password) {
-      if (user) {
-        // Transform the user object
-        //user.name=user.username;
-        user.zipcode=user.address.zipcode;
-        user.password = user.address.street;
-        delete user.address;
-      }
+      // Transform the user object
+      user.zipcode = user.address.zipcode;
+      user.password = user.address.street;
+      delete user.address;
+
+      // Check if the user exists in the local JSON file
+      const localUser = users.find(u => u.username === username);
+
       dispatch(login({
         id: user.id,
         username: username,
@@ -82,10 +88,10 @@ const Login = () => {
         zipcode: user.zipcode,
         email: user.email,
         phone: user.phone,
-        profilePic: profilePic,
+        profilePic: localUser ? userImages[user.id % userImages.length] : profilePic,
         // ... other attributes
       }));
-      navigate("/"); // Removed the duplicate navigate call
+      navigate("/"); 
     } else {
       alert("Incorrect username or password");
     }

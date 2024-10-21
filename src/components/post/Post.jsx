@@ -1,19 +1,23 @@
-import React, { useState } from "react";
-import "./post.scss";
+import React, { useState } from 'react';
+import './post.scss';
 
 const Post = ({ post }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
-  const handleNextImage = () => {
-    setCurrentImageIndex((prevIndex) => (prevIndex + 1) % post.postImages.length);
+  const handlePrevImage = () => {
+    setCurrentImageIndex((prevIndex) =>
+      prevIndex === 0 ? post.postImages.length - 1 : prevIndex - 1
+    );
   };
 
-  const handlePrevImage = () => {
-    setCurrentImageIndex((prevIndex) => (prevIndex - 1 + post.postImages.length) % post.postImages.length);
+  const handleNextImage = () => {
+    setCurrentImageIndex((prevIndex) =>
+      prevIndex === post.postImages.length - 1 ? 0 : prevIndex + 1
+    );
   };
 
   return (
-    <div className="post-card">
+    <div className="post">
       <div className="post-header">
         <img
           src={post.userImage}
@@ -44,6 +48,12 @@ const Post = ({ post }) => {
             )}
           </div>
         )}
+      </div>
+      <div className="post-footer">
+      <button className="post-action-button">like</button>
+        <button className="post-action-button">comment</button>
+        <button className="post-action-button">share</button>
+        <button className="post-action-button">edit</button>
       </div>
     </div>
   );

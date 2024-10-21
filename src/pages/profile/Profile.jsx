@@ -1,34 +1,33 @@
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import PlaceIcon from "@mui/icons-material/Place";
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
-import EditIcon from "@mui/icons-material/Edit";
 import PhoneIcon from "@mui/icons-material/Phone";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import EditProfileModal from "../../components/modal/EditProfileModal";
-import { AuthContext } from "../../context/authContext";
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
-import "./profile.scss";
 import AddAPhotoIcon from '@mui/icons-material/AddAPhoto';
 import { useSelector, useDispatch } from 'react-redux';
 import { selectUser } from "../../reducer/authReducer";  
 import { login } from "../../actions/authActions";
 import styled from 'styled-components';
+import "./profile.scss";
+import defaultProfilePic from '../../assets/profile.png'; 
 
 const BaseButton = styled.button`
-  width:auto;
+  width: auto;
   border: none;
   border-radius: 5px;
   padding: 5px 15px;
   font-size: 13px;
   cursor: pointer;
   transition: background-color 0.2s ease, color 0.2s ease;
-  font-weight:600;
+  font-weight: 600;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 `;
 
 const EditButton = styled(BaseButton)`
-  color:white;
+  color: white;
   background-color: #938eef; // Mimicking Bootstrap btn-danger color
   margin-right: 5px; // Add some margin to the right of the Cancel button
 
@@ -38,11 +37,9 @@ const EditButton = styled(BaseButton)`
 `;
 
 const Profile = () => {
-  //const { currentUser, setCurrentUser } = useContext(AuthContext);
   const currentUser = useSelector(selectUser);
   const dispatch = useDispatch();
 
-  
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [profilePicture, setProfilePicture] = useState(null);
 
@@ -55,7 +52,6 @@ const Profile = () => {
   };
 
   const handleUpdateProfile = (formData) => {
-    console.log("check data", formData);
     dispatch(login({
       ...currentUser,
       username: formData.username,
@@ -91,10 +87,7 @@ const Profile = () => {
         <div className="col-12 text-center mt-3">
           <div className="profile-pic-wrapper">
             <img
-              src={
-                currentUser.profilePic ||
-                "https://via.placeholder.com/150"
-              }
+              src={currentUser.profilePic || defaultProfilePic}
               alt={currentUser.username}
               className="img-fluid rounded-circle profile-pic"
             />

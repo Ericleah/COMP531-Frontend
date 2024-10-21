@@ -46,10 +46,9 @@ const UnfollowButton = styled(BaseButton)`
 
 const userImages = [
   "https://images.pexels.com/photos/4881619/pexels-photo-4881619.jpeg?auto=compress&cs=tinysrgb&w=1600",
+  "https://images.pexels.com/photos/614810/pexels-photo-614810.jpeg?auto=compress&cs=tinysrgb&w=1600",
   "https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=1600",
   "https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=1600",
-  "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=1600",
-  "https://images.pexels.com/photos/614810/pexels-photo-614810.jpeg?auto=compress&cs=tinysrgb&w=1600",
   "https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=1600",
   "https://images.pexels.com/photos/91227/pexels-photo-91227.jpeg?auto=compress&cs=tinysrgb&w=1600",
   "https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=1600",
@@ -146,8 +145,9 @@ const RightBar = () => {
         {message && <div className="alert alert-warning">{message}</div>}
         <h5 className="customTitle text-muted mb-3">Online Friends</h5>
         {allFriends.map((userId, index) => {
+
           const user = followedUsers.find((u) => u.id === userId);
-          const userImage = userImages[index % userImages.length];
+          const userImage = userImages[userId % userImages.length];
 
           if (!user) {
             return null;
