@@ -22,16 +22,20 @@ const LeftBar = () => {
   useEffect(() => {
     const fetchHeadline = async () => {
       try {
-        const response = await fetch("https://jsonplaceholder.typicode.com/users/1");
-        const data = await response.json();
-        setStatusHeadline(data.company.catchPhrase);
+        if (currentUser.id === 11) {
+          setStatusHeadline("Welcome to our platform!");
+        } else {
+          const response = await fetch("https://jsonplaceholder.typicode.com/users/1");
+          const data = await response.json();
+          setStatusHeadline(data.company.catchPhrase);
+        }
       } catch (error) {
         console.error("Error fetching the headline:", error);
       }
     };
 
     fetchHeadline();
-  }, []);
+  }, [currentUser.id]);
 
   const updateStatusHeadline = () => {
     if (newHeadline) {

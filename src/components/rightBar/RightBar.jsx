@@ -66,37 +66,39 @@ const RightBar = () => {
   const followedUsers = useSelector(selectFollowedUsers);
 
   const [message, setMessage] = useState(null);
+  const [initialAssigned, setInitialAssigned] = useState(false);
 
   useEffect(() => {
-    const totalUsers = 10;
+    const totalUsers = 11;
 
-    if (currentUserID <= totalUsers) {
-      if (!followedUsers || followedUsers.length === 0) {
-        const initialFollowedUserIds = [
+    if (currentUserID <= totalUsers && !initialAssigned) {
+      let initialFollowedUserIds;
+      if (currentUserID === 11) {
+        initialFollowedUserIds = [0];
+      } else {
+        initialFollowedUserIds = [
           (currentUserID % totalUsers) + 1,
           ((currentUserID + 1) % totalUsers) + 1,
           ((currentUserID + 2) % totalUsers) + 1,
         ];
-
-        fetch("https://jsonplaceholder.typicode.com/users")
-          .then((response) => response.json())
-          .then((data) => {
-            const initialFollowedUsers = data.filter((user) =>
-              initialFollowedUserIds.includes(user.id)
-            );
-
-            setOnlineFriends(initialFollowedUsers.map((user) => user.id));
-
-            dispatch(setFollowedUsers(initialFollowedUsers));
-          });
-      } else {
-        setOnlineFriends(followedUsers.map((user) => user.id));
-        dispatch(setFollowedUsers(followedUsers));
       }
+
+      fetch("https://jsonplaceholder.typicode.com/users")
+        .then((response) => response.json())
+        .then((data) => {
+          const initialFollowedUsers = data.filter((user) =>
+            initialFollowedUserIds.includes(user.id)
+          );
+
+          setOnlineFriends(initialFollowedUsers.map((user) => user.id));
+          dispatch(setFollowedUsers(initialFollowedUsers));
+          setInitialAssigned(true);
+        });
     } else {
-      setOnlineFriends([]);
+      setOnlineFriends(followedUsers.map((user) => user.id));
+      dispatch(setFollowedUsers(followedUsers));
     }
-  }, [currentUserID, dispatch, followedUsers]);
+  }, [currentUserID, dispatch, followedUsers, initialAssigned]);
 
   const handleUnfollow = (userToUnfollow) => {
     dispatch(removeFollowedUser(userToUnfollow));
@@ -145,7 +147,6 @@ const RightBar = () => {
         {message && <div className="alert alert-warning">{message}</div>}
         <h5 className="customTitle text-muted mb-3">Online Friends</h5>
         {allFriends.map((userId, index) => {
-
           const user = followedUsers.find((u) => u.id === userId);
           const userImage = userImages[userId % userImages.length];
 
