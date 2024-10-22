@@ -60,6 +60,7 @@ const userImages = [
 const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -93,7 +94,7 @@ const Login = () => {
       }));
       navigate("/"); 
     } else {
-      alert("Incorrect username or password");
+      setErrorMessage("Incorrect username or password");
     }
   };
 
@@ -118,6 +119,7 @@ const Login = () => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
+          {errorMessage && <div className="error-message">{errorMessage}</div>}
           <Button type="submit">Login</Button>
         </form>
         <Link to="/register">Need an account? Register here</Link>
