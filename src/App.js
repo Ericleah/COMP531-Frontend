@@ -30,51 +30,48 @@ const GlobalStyle = createGlobalStyle`
   }
 `;
 
-const Layout = () => (
+const Layout = ({ showBars }) => (
   <div className="theme-light">
     <GlobalStyle />
     <Navbar />
     <Row className="d-flex">
+      {showBars && (
+        <Col
+          xs={{ span: 12, order: "1" }}
+          md={{ span: 3, order: "1" }}
+          className="px-0"
+        >
+          <LeftBar />
+        </Col>
+      )}
       <Col
-        xs={{ span: 12, order: "1" }}
-        md={{ span: 3, order: "1" }}
-        className="px-0"
-      >
-        <LeftBar />
-      </Col>
-      <Col
-        xs={{ span: 12, order: "3" }}
-        md={{ span: 6, order: "2" }}
+        xs={{ span: 12, order: showBars ? "3" : "1" }}
+        md={{ span: showBars ? 6 : 12, order: "2" }}
         className="px-0"
       >
         <Outlet />
       </Col>
-      <Col
-        xs={{ span: 12, order: "2" }}
-        md={{ span: 3, order: "3" }}
-        className="px-0"
-      >
-        <RightBar />
-      </Col>
+      {showBars && (
+        <Col
+          xs={{ span: 12, order: "2" }}
+          md={{ span: 3, order: "3" }}
+          className="px-0"
+        >
+          <RightBar />
+        </Col>
+      )}
     </Row>
-    {/* <div className="d-flex">
-      <LeftBar />
-      <div style={{ flex: 6 }}>
-        <Outlet />
-      </div>
-      <RightBar />
-    </div> */}
   </div>
 );
 
-const ProtectedRoute = () => {
+const ProtectedRoute = ({ showBars }) => {
   const { currentUser } = useSelector((state) => state.auth);
 
   if (!currentUser) {
     return <Navigate to="/login" />;
   }
 
-  return <Layout />; // Render children inside the Layout
+  return <Layout showBars={showBars} />; // Render children inside the Layout
 };
 
 const CheckLogin = ({ children }) => {
@@ -91,6 +88,7 @@ function App() {
   const { currentUser } = useSelector((state) => state.auth);
   const { darkMode } = useContext(DarkModeContext);
   const [filterTerm, setFilterTerm] = useState("");
+  const [showBars, setShowBars] = useState(true);
 
   return (
     <FilterTermContext.Provider value={{ filterTerm, setFilterTerm }}>
@@ -103,10 +101,10 @@ function App() {
           {/* Protected Routes */}
           <Route
             path="/"
-            element={currentUser ? <Layout /> : <Navigate to="/login" />}
+            element={currentUser ? <ProtectedRoute showBars={showBars} /> : <Navigate to="/login" />}
           >
             <Route index element={<Home />} />
-            <Route path="profile/:id" element={<Profile />} />
+            <Route path="profile/:id" element={<Profile setShowBars={setShowBars} />} />
           </Route>
 
           {/* Catch-all redirect to force users to login if they're not authenticated */}

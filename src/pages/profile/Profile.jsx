@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import AddAPhotoIcon from "@mui/icons-material/AddAPhoto";
@@ -36,11 +36,21 @@ const EditButton = styled(BaseButton)`
   }
 `;
 
-const Profile = () => {
+const Profile = ({ setShowBars }) => {
   const currentUser = useSelector(selectUser);
   const dispatch = useDispatch();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [profilePicture, setProfilePicture] = useState(null);
+
+  useEffect(() => {
+    // Hide left and right bars when the profile page is loaded
+    setShowBars(false);
+
+    // Cleanup function to show bars again when the component is unmounted
+    return () => {
+      setShowBars(true);
+    };
+  }, [setShowBars]);
 
   const handleEditClick = () => {
     setIsModalOpen(true);
