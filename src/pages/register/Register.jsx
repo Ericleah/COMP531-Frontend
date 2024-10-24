@@ -80,7 +80,7 @@ const Register = () => {
 
   const checkUserName = (inputValue) => {
     if (!(/^[a-z]*$/.test(inputValue[0]))) {
-        setUserNameError('Must start with lower case.');
+        setUserNameError('Must start with a letter.');
         $('[data-toggle="popover-username"]').popover('show');
     } else if (!(/^[a-z][A-Za-z0-9]*$/.test(inputValue))) {
         setUserNameError('Account name can only contain numbers and characters.');
@@ -92,7 +92,7 @@ const Register = () => {
 
   const checkEmail = (emailValue) => {
     if (!(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(emailValue))) {
-        setEmailError("Enter email in this format: 1@1.com");
+        setEmailError("Please enter a valid email in this format: 1@1.com");
         $('[data-toggle="popover-email"]').popover('show');
     } else {
         setEmailError("");
@@ -102,7 +102,7 @@ const Register = () => {
 
   const checkPhone = (phoneValue) => {
     if (!(/^\(?(\d{3})\)?[- ]?(\d{3})[- ]?(\d{4})$/.test(phoneValue))) {
-      setPhoneError("Enter phone in this format: 123-456-7890.");
+      setPhoneError("Please enter a valid phone number in this format: 123-456-7890.");
       $('[data-toggle="popover-phone"]').popover('show');
     } else {
       setPhoneError(""); 
@@ -127,7 +127,7 @@ const Register = () => {
 
   const checkZipCode = (zipValue) => {
     if (!(/^\d{5}(-\d{4})?$/.test(zipValue))) {
-        setZipCodeError("Enter zip in this format: 77030 or 77030-1234.");
+        setZipCodeError("Please enter a valid 5-digit zipcode in this format: 77030 or 77030-1234.");
     } else {
       setZipCodeError(""); 
     }
